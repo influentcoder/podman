@@ -757,6 +757,7 @@ func (ic *imageCopier) copyLayer(ctx context.Context, srcInfo types.BlobInfo, to
 			RequiredCompression:     requiredCompression,
 			OriginalCompression:     srcInfo.CompressionAlgorithm,
 			TOCDigest:               tocDigest,
+			FallbackToBlobDigest:    true,
 		})
 		if err != nil {
 			return types.BlobInfo{}, "", fmt.Errorf("trying to reuse blob %s at destination: %w", srcInfo.Digest, err)

@@ -141,6 +141,7 @@ type TryReusingBlobOptions struct {
 	RequiredCompression     *compression.Algorithm // If set, reuse blobs with a matching algorithm as per implementations in internal/imagedestination/impl.helpers.go
 	OriginalCompression     *compression.Algorithm // May be nil to indicate “uncompressed” or “unknown”.
 	TOCDigest               digest.Digest          // If specified, the blob can be looked up in the destination also by its TOC digest.
+	FallbackToBlobDigest    bool                   // If true, try to resuse a blob even if it doesn't have a TOCDigest
 }
 
 // ReusedBlob is information about a blob reused in a destination.

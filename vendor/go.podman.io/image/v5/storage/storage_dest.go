@@ -532,6 +532,10 @@ func (s *storageImageDestination) tryReusingBlobAsPending(blobDigest digest.Dige
 	if err := blobDigest.Validate(); err != nil {
 		return false, private.ReusedBlob{}, fmt.Errorf("Can not check for a blob with invalid digest: %w", err)
 	}
+	if options.FallbackToBlobDigest && options.TOCDigest == "" {
+		options.TOCDigest = blobDigest
+	}
+
 	useTOCDigest := false // If set, (options.TOCDigest != "" && options.LayerIndex != nil) AND we can use options.TOCDigest safely.
 	if options.TOCDigest != "" && options.LayerIndex != nil {
 		if err := options.TOCDigest.Validate(); err != nil {
@@ -570,7 +574,7 @@ func (s *storageImageDestination) tryReusingBlobAsPending(blobDigest digest.Dige
 			// Compare the long comment in PutBlobPartial. We assume that the Additional Layer Store will, somehow,
 			// avoid layer “view” ambiguity.
 			alsTOCDigest := aLayer.TOCDigest()
-			if alsTOCDigest != options.TOCDigest {
+			if alsTOCDigest != options.TOCDigest && !options.FallbackToBlobDigest {
 				// FIXME: If alsTOCDigest is "", the Additional Layer Store FUSE server is probably just too old, and we could
 				// probably go on reading the layer from other sources.
 				//
